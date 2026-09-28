@@ -1,6 +1,6 @@
 # bluetooth-midi (Koala workshop fork)
 
-A [Bluetooth Low Energy MIDI](https://www.midi.org/specifications/item/bluetooth-le-midi) extension for the @boardname@ that works on **both micro:bit v1 and v2**.
+A [Bluetooth Low Energy MIDI](https://www.midi.org/specifications/item/bluetooth-le-midi) extension for the micro:bit that works on **both micro:bit v1 and v2**.
 
 ## Why this fork exists
 
