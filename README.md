@@ -53,7 +53,7 @@ micro:bit's pairing process, and it keeps workshop setup quick. Bear in mind:
 * Use it for workshops and play, not for anything where an unexpected connection would matter.
 
 If MakeCode needs a specific version, pin it by tag or commit in **Project Settings → Edit settings as text**,
-e.g. `"bluetooth-midi": "github:richhall/pxt-bluetooth-midi#v2.1.0"`. MakeCode caches GitHub versions, so
+e.g. `"bluetooth-midi": "github:richhall/pxt-bluetooth-midi#v2.1.1"`. MakeCode caches GitHub versions, so
 creating a new project is the most reliable way to pick up a new release.
 
 ## Example: a two-button pad controller

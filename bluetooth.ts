@@ -14,6 +14,17 @@ namespace bluetooth {
     }
 
     /**
+     * Diagnostic: 1 if the MIDI service UUID was added to the advert, 0 if not attempted,
+     * otherwise step * 100 + BLE error code.
+     */
+    //% blockId=bluetooth_midi_advertising_status block="bluetooth midi advertising status"
+    //% advanced=true shim=bluetooth::midiAdvertisingStatus
+    export function midiAdvertisingStatus(): number {
+        // simulator only; the micro:bit runs the C++ version
+        return 1;
+    }
+
+    /**
      * Sends a MIDI message
      */
     //% shim=bluetooth::midiSendMessage
