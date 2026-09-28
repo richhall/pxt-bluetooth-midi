@@ -21,5 +21,14 @@
         "tests.ts"
     ],
     "public": true,
-    "installedVersion": "workspace:ba1a3850-63c9-4062-aab8-393d43dccbb2"
+    "installedVersion": "workspace:ba1a3850-63c9-4062-aab8-393d43dccbb2",
+    "yotta": {
+        "config": {
+            "microbit-dal": {
+                "bluetooth": {
+                    "event_service": 0
+                }
+            }
+        }
+    }
 }
