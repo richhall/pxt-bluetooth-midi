@@ -20,6 +20,8 @@
 #include "pxt.h"
 #include "BluetoothMIDIService.h"
 
+#if !MICROBIT_CODAL // micro:bit v1 (DAL) only
+
 
 // MIDI characteristic
 const uint8_t midiCharacteristicUuid[] = {
@@ -51,7 +53,6 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
 
     ble.addService(midiService);
 
-#if !MICROBIT_CODAL
     // iOS/macOS BLE MIDI browsers only list peripherals that advertise the MIDI
     // service UUID. Put the UUID in the advertising packet and move the device
     // name to the scan response (both don't fit in 31 bytes).
@@ -59,10 +60,11 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
     for (int i = 0; i < 16; i++)
         advUuid[i] = midiServiceUuid[15 - i]; // advertising data is little-endian
 
-    uint8_t name[32];
-    unsigned nameLength = sizeof(name);
-    if (ble.gap().getDeviceName(name, &nameLength) != BLE_ERROR_NONE)
-        nameLength = 0;
+    // same name the DAL advertises, e.g. "BBC micro:bit [zegap]"
+    ManagedString bleName = ManagedString("BBC micro:bit [") + uBit.getName() + ManagedString("]");
+    const uint8_t *name = (const uint8_t *)bleName.toCharArray();
+    unsigned nameLength = bleName.length();
+    ble.gap().setDeviceName(name);
 
     // advertisingStatus: 1 = all steps ok, otherwise step * 100 + BLE error code
     ble_error_t err;
@@ -74,7 +76,6 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
     if ((err = ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, advUuid, sizeof(advUuid))) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 300 + err;
     if (nameLength > 0 && (err = ble.gap().accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, name, nameLength)) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 400 + err;
     if ((err = ble.gap().startAdvertising()) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 500 + err;
-#endif
 
     midiCharacteristicHandle = midiCharacteristic.getValueHandle();
 
@@ -140,3 +141,5 @@ void BluetoothMIDIService::sendMidiMessage(uint8_t data0, uint8_t data1, uint8_t
         ble.gattServer().notify(midiCharacteristicHandle, (uint8_t *)midiBuffer, 5);
     }
 }
+
+#endif // !MICROBIT_CODAL

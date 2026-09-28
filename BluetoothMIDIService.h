@@ -19,6 +19,8 @@
 #ifndef __BLEMIDI_H__
 #define __BLEMIDI_H__
 
+#if !MICROBIT_CODAL // micro:bit v1 (DAL) only
+
 #include "ble/BLE.h"
 
 /** 
@@ -56,5 +58,7 @@ private:
     GattAttribute::Handle_t midiCharacteristicHandle;    
     Timer tick;
 };
+
+#endif // !MICROBIT_CODAL
 
 #endif /* __BLEMIDI_H__ */

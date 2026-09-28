@@ -10,6 +10,17 @@ using namespace pxt;
 * A set of functions to send MIDI commands over Bluetooth
 */
 namespace bluetooth {
+#if MICROBIT_CODAL
+    // BLE MIDI is only implemented on micro:bit v1 (DAL); v2 builds get no-op stubs.
+    //%
+    int midiAdvertisingStatus() {
+        return -1;
+    }
+
+    //%
+    void midiSendMessage(Buffer data) {
+    }
+#else
     BluetoothMIDIService* pMidi = NULL;
     BluetoothMIDIService* getMidi() 
     {
@@ -45,4 +56,5 @@ namespace bluetooth {
                 break;
         }
     }
+#endif
 }
