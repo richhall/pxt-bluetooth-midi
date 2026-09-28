@@ -43,6 +43,7 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
 
     GattCharacteristic midiCharacteristic(midiCharacteristicUuid, midiBuffer, 0, sizeof(midiBuffer), 
           GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ
+        | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE_WITHOUT_RESPONSE // required by the BLE MIDI spec; incoming MIDI is ignored
         | GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY
         );
     GattCharacteristic *midiChars[] = {&midiCharacteristic};

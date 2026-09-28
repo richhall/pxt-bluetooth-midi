@@ -51,7 +51,7 @@ private:
     void onDisconnection(const Gap::DisconnectionCallbackParams_t* params);
 
     uint16_t timestamp;
-    uint8_t midiBuffer[5];
+    uint8_t midiBuffer[20]; // max BLE packet payload, so writes from the central fit
     bool firstRead;
 
     BLEDevice &ble;
