@@ -18,6 +18,16 @@ namespace bluetooth {
         return pMidi;
     }
 
+    /**
+     * Diagnostic: 1 if the MIDI service UUID was added to the advert, 0 if not attempted,
+     * otherwise step * 100 + BLE error code.
+     */
+    //% blockId=bluetooth_midi_advertising_status block="bluetooth midi advertising status"
+    //% advanced=true
+    int midiAdvertisingStatus() {
+        return getMidi()->advertisingStatus;
+    }
+
     //%
     void midiSendMessage(Buffer data) {
         BluetoothMIDIService* pMidi = getMidi();            

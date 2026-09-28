@@ -35,6 +35,7 @@ const uint8_t midiServiceUuid[] = {
 
 BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
     timestamp = 0;
+    advertisingStatus = 0;
     memset(midiBuffer, 0, sizeof(midiBuffer));
     firstRead = true;
 
@@ -63,14 +64,16 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
     if (ble.gap().getDeviceName(name, &nameLength) != BLE_ERROR_NONE)
         nameLength = 0;
 
-    ble.gap().stopAdvertising();
+    // advertisingStatus: 1 = all steps ok, otherwise step * 100 + BLE error code
+    ble_error_t err;
+    advertisingStatus = 1;
+    if ((err = ble.gap().stopAdvertising()) != BLE_ERROR_NONE) advertisingStatus = 100 + err;
     ble.gap().clearAdvertisingPayload();
     ble.gap().clearScanResponse();
-    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
-    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, advUuid, sizeof(advUuid));
-    if (nameLength > 0)
-        ble.gap().accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, name, nameLength);
-    ble.gap().startAdvertising();
+    if ((err = ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE)) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 200 + err;
+    if ((err = ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, advUuid, sizeof(advUuid))) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 300 + err;
+    if (nameLength > 0 && (err = ble.gap().accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, name, nameLength)) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 400 + err;
+    if ((err = ble.gap().startAdvertising()) != BLE_ERROR_NONE && advertisingStatus == 1) advertisingStatus = 500 + err;
 #endif
 
     midiCharacteristicHandle = midiCharacteristic.getValueHandle();

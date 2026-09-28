@@ -42,6 +42,8 @@ public:
     void sendMidiMessage(uint8_t data0, uint8_t data1);
     void sendMidiMessage(uint8_t data0, uint8_t data1, uint8_t data2);
 
+    int advertisingStatus;
+
 private:    
     void onDataRead(const GattReadCallbackParams* params);
     void onDisconnection(const Gap::DisconnectionCallbackParams_t* params);
