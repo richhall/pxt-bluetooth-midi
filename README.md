@@ -61,6 +61,9 @@ creating a new project is the most reliable way to pick up a new release.
 Koala triggers pads from MIDI **notes**. This example sends exactly what a Novation Launchpad sends:
 a note-on at velocity 127 when a button is pressed, and a note-on at velocity 0 when it's released, on channel 1.
 
+The same code is in [`examples/koala-pad-controller.ts`](examples/koala-pad-controller.ts). Paste it into
+the **JavaScript** view of your MakeCode project, then switch to **Blocks** if you prefer.
+
 ```typescript
 bluetooth.onBluetoothConnected(function () {
     basic.showString("C")
