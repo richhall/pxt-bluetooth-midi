@@ -50,6 +50,29 @@ BluetoothMIDIService::BluetoothMIDIService(BLEDevice *dev): ble(*dev) {
 
     ble.addService(midiService);
 
+#if !MICROBIT_CODAL
+    // iOS/macOS BLE MIDI browsers only list peripherals that advertise the MIDI
+    // service UUID. Put the UUID in the advertising packet and move the device
+    // name to the scan response (both don't fit in 31 bytes).
+    uint8_t advUuid[16];
+    for (int i = 0; i < 16; i++)
+        advUuid[i] = midiServiceUuid[15 - i]; // advertising data is little-endian
+
+    uint8_t name[32];
+    unsigned nameLength = sizeof(name);
+    if (ble.gap().getDeviceName(name, &nameLength) != BLE_ERROR_NONE)
+        nameLength = 0;
+
+    ble.gap().stopAdvertising();
+    ble.gap().clearAdvertisingPayload();
+    ble.gap().clearScanResponse();
+    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::BREDR_NOT_SUPPORTED | GapAdvertisingData::LE_GENERAL_DISCOVERABLE);
+    ble.gap().accumulateAdvertisingPayload(GapAdvertisingData::COMPLETE_LIST_128BIT_SERVICE_IDS, advUuid, sizeof(advUuid));
+    if (nameLength > 0)
+        ble.gap().accumulateScanResponse(GapAdvertisingData::COMPLETE_LOCAL_NAME, name, nameLength);
+    ble.gap().startAdvertising();
+#endif
+
     midiCharacteristicHandle = midiCharacteristic.getValueHandle();
 
     ble.gattServer().onDataRead(this, &BluetoothMIDIService::onDataRead);
