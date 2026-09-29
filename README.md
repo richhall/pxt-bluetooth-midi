@@ -49,7 +49,7 @@ MIDI**, with no pairing or encryption. It's used here because iOS BLE MIDI apps 
 micro:bit's pairing process, and it keeps workshop setup quick. Bear in mind:
 
 * Each micro:bit shows up by its own name, e.g. `BBC micro:bit [zegap]`. In a room with many
-  micro:bits, have learners find their board's name in the KORG app list (unplug a board and see which name disappears).
+  micro:bits, have learners find their board's name in the Bluetooth MIDI Connect app's device list (unplug a board and see which name disappears).
 * Use it for workshops and play, not for anything where an unexpected connection would matter.
 
 If MakeCode needs a specific version, pin it by tag or commit in **Project Settings → Edit settings as text**,
@@ -94,20 +94,20 @@ The standard [MIDI extension](https://github.com/microsoft/pxt-midi) blocks (`mi
 
 ## Connecting to Koala on iPad
 
-**Connect with the KORG BLE-MIDI app first, then open Koala.** Koala does not reliably connect to
+**Connect with the Bluetooth MIDI Connect app first, then open Koala.** Koala does not reliably connect to
 Bluetooth MIDI devices by itself.
 
-1. Install KORG's free **BLE-MIDI** app from the App Store. GarageBand's
+1. Install KORG's free **Bluetooth MIDI Connect** app ("KORG BLE MIDI" in some listings) from the App Store. GarageBand's
    *Settings → Advanced → Bluetooth MIDI Devices* also works.
 2. Power the micro:bit. Don't pair it in iPad **Settings → Bluetooth**: BLE MIDI devices never appear there.
-3. In **KORG BLE-MIDI**, tap the micro:bit to connect. The micro:bit shows **C**.
+3. In **Bluetooth MIDI Connect**, tap the micro:bit to connect. The micro:bit shows **C**.
 4. Now open **Koala** → Settings → MIDI and make sure the micro:bit input is switched on.
    Watch the MIDI monitor line at the bottom of the settings: it should change from "no MIDI notes so far" when you press a button.
 5. Press **A** / **B**.
 
 Once connected this way, iOS remembers the micro:bit until you choose *Forget*. If you forget it,
-or Koala stops receiving, repeat the KORG step. Disconnecting and reconnecting from inside Koala
-doesn't work reliably, so reconnect in KORG instead.
+or Koala stops receiving, repeat the Bluetooth MIDI Connect step. Disconnecting and reconnecting from inside Koala
+doesn't work reliably, so reconnect in Bluetooth MIDI Connect instead.
 
 ### Koala MIDI settings that worked in testing
 
@@ -122,7 +122,7 @@ doesn't work reliably, so reconnect in KORG instead.
 ## Tested with
 
 * micro:bit v1 (board ID 9900) and micro:bit v2.2 (board ID 9906), same `.hex`
-* iPad, Koala Sampler, KORG BLE-MIDI, GarageBand (September 2026)
+* iPad, Koala Sampler, Bluetooth MIDI Connect (KORG BLE MIDI), GarageBand (September 2026)
 
 ## Supported targets
 
