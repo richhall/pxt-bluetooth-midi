@@ -82,8 +82,19 @@ void BluetoothMIDIService::configureMidiAdvertising(uint8_t serviceUuidType)
     memset(&gap_adv_data, 0, sizeof(gap_adv_data));
     gap_adv_data.adv_data.p_data = enc_adv;
     gap_adv_data.adv_data.len = adv_len;
-    gap_adv_data.scan_rsp_data.p_data = (uint8_t *)midi_scanrsp_uuid;
-    gap_adv_data.scan_rsp_data.len = sizeof(midi_scanrsp_uuid);
+    // Scan response = MIDI UUID (18 bytes) + shortened name (up to 11 bytes). Windows was only
+    // ever seen to receive the scan response from this board (2026-09-29), so the name goes here
+    // too, otherwise Windows/MIDIberry hide the device as unnamed.
+    static uint8_t scanrsp[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
+    memcpy(scanrsp, midi_scanrsp_uuid, sizeof(midi_scanrsp_uuid));
+    uint16_t scanrsp_len = sizeof(midi_scanrsp_uuid);
+    static const char shortName[] = "micro:bit";
+    scanrsp[scanrsp_len++] = sizeof(shortName);          // length = type byte + 9 chars
+    scanrsp[scanrsp_len++] = 0x08;                       // shortened local name
+    memcpy(&scanrsp[scanrsp_len], shortName, sizeof(shortName) - 1);
+    scanrsp_len += sizeof(shortName) - 1;
+    gap_adv_data.scan_rsp_data.p_data = scanrsp;
+    gap_adv_data.scan_rsp_data.len = scanrsp_len;
 
     ble_gap_adv_params_t gap_adv_params;
     memset(&gap_adv_params, 0, sizeof(gap_adv_params));
