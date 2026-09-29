@@ -54,7 +54,8 @@ void BluetoothMIDIService::configureMidiAdvertising(uint8_t serviceUuidType)
     (void)serviceUuidType;
 
     uint8_t adv_handle = 0;
-    uint8_t enc_adv[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
+    // static: the SoftDevice keeps this pointer while advertising, so it must outlive the call
+    static uint8_t enc_adv[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     uint16_t adv_len = sizeof(enc_adv);
 
     // Built by hand rather than with ble_advdata_encode: on a v2 the encoder's name was
