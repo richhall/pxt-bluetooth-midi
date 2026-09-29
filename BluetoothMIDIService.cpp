@@ -57,16 +57,24 @@ void BluetoothMIDIService::configureMidiAdvertising(uint8_t serviceUuidType)
     uint8_t enc_adv[BLE_GAP_ADV_SET_DATA_SIZE_MAX];
     uint16_t adv_len = sizeof(enc_adv);
 
-    ble_advdata_t advdata;
-    memset(&advdata, 0, sizeof(advdata));
-    advdata.flags = BLE_GAP_ADV_FLAG_BR_EDR_NOT_SUPPORTED | BLE_GAP_ADV_FLAG_LE_GENERAL_DISC_MODE;
-    advdata.name_type = BLE_ADVDATA_FULL_NAME;
-    uint32_t err = ble_advdata_encode(&advdata, enc_adv, &adv_len);
-    if (err != NRF_SUCCESS) {
-        adv_len = 3;
-        enc_adv[0] = 0x02;
-        enc_adv[1] = 0x01;
-        enc_adv[2] = 0x06;
+    // Built by hand rather than with ble_advdata_encode: on a v2 the encoder's name was
+    // missing from the advert seen by Windows (2026-09-29), so Windows/MIDIberry hid the
+    // device. Layout: flags (3 bytes) + local name (complete, or shortened if > 26 chars).
+    enc_adv[0] = 0x02;
+    enc_adv[1] = 0x01;
+    enc_adv[2] = BLE_GAP_ADV_FLAG_BR_EDR_NOT_SUPPORTED | BLE_GAP_ADV_FLAG_LE_GENERAL_DISC_MODE;
+    adv_len = 3;
+
+    uint8_t name[BLE_GAP_DEVNAME_DEFAULT_LEN + 1];
+    uint16_t name_len = sizeof(name);
+    if (sd_ble_gap_device_name_get(name, &name_len) == NRF_SUCCESS && name_len > 0) {
+        uint16_t room = BLE_GAP_ADV_SET_DATA_SIZE_MAX - adv_len - 2;
+        bool truncated = name_len > room;
+        uint16_t n = truncated ? room : name_len;
+        enc_adv[adv_len++] = n + 1;
+        enc_adv[adv_len++] = truncated ? 0x08 : 0x09;
+        memcpy(&enc_adv[adv_len], name, n);
+        adv_len += n;
     }
 
     ble_gap_adv_data_t gap_adv_data;
